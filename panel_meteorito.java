@@ -9,15 +9,20 @@ import java.util.Random;
 
 public class panel_meteorito  extends JPanel {
     private RandomMeteorito randomMeteorito;
+    private MoveMeteorito moveMeteorito;
     public panel_meteorito () {
         randomMeteorito = new RandomMeteorito();
+        moveMeteorito = new MoveMeteorito(this);
+
         setBackground(Color.BLACK);
         setLayout(null);
+
+        moveMeteorito.start();
     }
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(randomMeteorito.randomImage, 0, 0,50,50,this);
-        randomMeteorito.repaint();
+        g.drawImage(randomMeteorito.randomImage, moveMeteorito.getX(), moveMeteorito.getY(),50,50,this);
+        repaint();
     }
 }
 
@@ -47,5 +52,45 @@ class RandomMeteorito extends JPanel {
         }
         
         setOpaque(false);
+    }
+}
+class MoveMeteorito extends Thread{
+    private int x = 400;
+    private int y = 300;
+    private panel_meteorito panel;
+    private Random random = new Random();
+    private int randomdirection;
+    MoveMeteorito(panel_meteorito panel){
+        this.panel = panel;
+
+        randomdirection = random.nextInt(4);
+    }
+    public void move(){
+        if (randomdirection == 0) {
+            x++;
+        } else if (randomdirection == 1){
+            y++;
+        } else if(randomdirection == 2){
+            x--;
+        } else if(randomdirection == 3){
+            y--;
+        }
+    }
+    public int getX() {
+        return x;
+    }
+    public int getY() {
+        return y;
+    }
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(50);
+                move();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        }
     }
 }
