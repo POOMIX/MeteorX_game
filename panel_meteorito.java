@@ -16,21 +16,13 @@ public class panel_meteorito  extends JPanel {
     }
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(randomMeteorito.randomImage, 0, 0,randomMeteorito.getNewWidth(),randomMeteorito.getNewHeight(),this);
+        g.drawImage(randomMeteorito.randomImage, 0, 0,50,50,this);
         randomMeteorito.repaint();
     }
 }
 
 class RandomMeteorito extends JPanel {
     Image randomImage;
-    private int newWidth = 50;
-    private int newHeight = 50;
-    public int getNewHeight() {
-        return newHeight;
-    }
-    public int getNewWidth() {
-        return newWidth;
-    }
     String[] imageMeteorito = {
         "images/1.png",
         "images/2.png",
