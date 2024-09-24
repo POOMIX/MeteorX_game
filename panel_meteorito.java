@@ -9,20 +9,25 @@ import java.util.Random;
 
 public class panel_meteorito  extends JPanel {
     private RandomMeteorito randomMeteorito;
-    private MoveMeteorito moveMeteorito;
+    private MoveMeteorito[] moveMeteorito = new MoveMeteorito[5];;
     public panel_meteorito () {
         randomMeteorito = new RandomMeteorito();
-        moveMeteorito = new MoveMeteorito(this);
 
         setBackground(Color.BLACK);
         setLayout(null);
 
-        moveMeteorito.start();
+        for (int i = 0; i < moveMeteorito.length; i++) {
+            moveMeteorito[i] = new MoveMeteorito(this);
+            moveMeteorito[i].start();
+        }
+
     }
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(randomMeteorito.randomImage, moveMeteorito.getX(), moveMeteorito.getY(),50,50,this);
-        repaint();
+        for (int i = 0; i < moveMeteorito.length; i++) {
+            g.drawImage(randomMeteorito.randomImage, moveMeteorito[i].getX(), moveMeteorito[i].getY(),50,50,this);
+            repaint();
+        }
     }
 }
 
@@ -108,8 +113,9 @@ class MoveMeteorito extends Thread{
     public void run() {
         while (true) {
             try {
-                Thread.sleep(1);
+                Thread.sleep(100);
                 move();
+                panel.repaint();
             } catch (Exception e) {
                 // TODO: handle exception
             }
