@@ -63,17 +63,41 @@ class MoveMeteorito extends Thread{
     MoveMeteorito(panel_meteorito panel){
         this.panel = panel;
 
-        randomdirection = random.nextInt(4);
+        randomdirection = random.nextInt(8);
     }
     public void move(){
-        if (randomdirection == 0) {
+        if (randomdirection == 0) {//right
             x++;
-        } else if (randomdirection == 1){
+            if (x >= 800) {
+                randomdirection = 2;
+            }
+        } else if (randomdirection == 1){//down
             y++;
-        } else if(randomdirection == 2){
+            if (y >= 600) {
+                randomdirection = 3;
+            }
+        } else if(randomdirection == 2){//left
             x--;
-        } else if(randomdirection == 3){
+            if (x <= 0) {
+                randomdirection = 0;
+            }
+        } else if(randomdirection == 3){//up
             y--;
+            if (y <= 0) {
+                randomdirection = 1;
+            }
+        } else if (randomdirection == 4){//upright
+            x++;
+            y--;
+        } else if(randomdirection == 5){//upleft
+            x--;
+            y--;
+        } else if(randomdirection == 6){//downright
+            x++;
+            y++;
+        } else if(randomdirection == 7){//downleft
+            x--;
+            y++;
         }
     }
     public int getX() {
@@ -86,7 +110,7 @@ class MoveMeteorito extends Thread{
     public void run() {
         while (true) {
             try {
-                Thread.sleep(50);
+                Thread.sleep(1);
                 move();
             } catch (Exception e) {
                 // TODO: handle exception
