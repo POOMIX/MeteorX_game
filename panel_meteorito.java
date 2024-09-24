@@ -68,24 +68,12 @@ class MoveMeteorito extends Thread{
     public void move(){
         if (randomdirection == 0) {//right
             x++;
-            if (x >= 800) {
-                randomdirection = 2;
-            }
         } else if (randomdirection == 1){//down
             y++;
-            if (y >= 600) {
-                randomdirection = 3;
-            }
         } else if(randomdirection == 2){//left
             x--;
-            if (x <= 0) {
-                randomdirection = 0;
-            }
         } else if(randomdirection == 3){//up
             y--;
-            if (y <= 0) {
-                randomdirection = 1;
-            }
         } else if (randomdirection == 4){//upright
             x++;
             y--;
@@ -99,6 +87,16 @@ class MoveMeteorito extends Thread{
             x--;
             y++;
         }
+
+        if (x >= 800) {
+            randomdirection = 2;
+        } else if (y >= 600) {
+            randomdirection = 3;
+        } else if (x <= 0) {
+            randomdirection = 0;
+        } else if (y <= 0) {
+            randomdirection = 1;
+        } 
     }
     public int getX() {
         return x;
