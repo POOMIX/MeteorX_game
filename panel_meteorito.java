@@ -25,14 +25,14 @@ public class panel_meteorito  extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         for (int i = 0; i < moveMeteorito.length; i++) {
-            g.drawImage(randomMeteorito.randomImage, moveMeteorito[i].getX(), moveMeteorito[i].getY(),50,50,this);
+            g.drawImage(randomMeteorito.randomImage[i], moveMeteorito[i].getX(), moveMeteorito[i].getY(),50,50,this);
             repaint();
         }
     }
 }
 
 class RandomMeteorito extends JPanel {
-    Image randomImage;
+    Image randomImage[] = new Image[5];;
     String[] imageMeteorito = {
         "images/1.png",
         "images/2.png",
@@ -47,13 +47,9 @@ class RandomMeteorito extends JPanel {
     };
     public RandomMeteorito() {
         Random random = new Random();
-        int index = random.nextInt(imageMeteorito.length);
-        randomImage = Toolkit.getDefaultToolkit().createImage(System.getProperty("user.dir")+File.separator+imageMeteorito[index]);
-        if (randomImage != null) {
-            setSize(randomImage.getWidth(null), randomImage.getHeight(null));
-            setLocation(random.nextInt(800), -20);
-        } else {
-            System.err.println("Image not found: " + imageMeteorito[index]);
+        for (int i = 0; i < randomImage.length; i++) {
+            int index = random.nextInt(imageMeteorito.length);
+            randomImage[i] = Toolkit.getDefaultToolkit().createImage(System.getProperty("user.dir")+File.separator+imageMeteorito[index]);
         }
         
         setOpaque(false);
@@ -93,9 +89,9 @@ class MoveMeteorito extends Thread{
             y++;
         }
 
-        if (x >= 800) {
+        if (x >= 730) {
             randomdirection = 2;
-        } else if (y >= 600) {
+        } else if (y >= 530) {
             randomdirection = 3;
         } else if (x <= 0) {
             randomdirection = 0;
@@ -113,9 +109,8 @@ class MoveMeteorito extends Thread{
     public void run() {
         while (true) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(1);
                 move();
-                panel.repaint();
             } catch (Exception e) {
                 // TODO: handle exception
             }
