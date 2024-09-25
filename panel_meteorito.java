@@ -1,18 +1,20 @@
-import javax.swing.JPanel;
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
-import java.awt.Graphics;
 import java.util.Random;
+import javax.swing.JPanel;
 
 
 public class panel_meteorito  extends JPanel {
+    private int amount_meteor;
     private RandomMeteorito randomMeteorito;
-    private MoveMeteorito[] moveMeteorito = new MoveMeteorito[5];;
-    public panel_meteorito () {
-        randomMeteorito = new RandomMeteorito();
-
+    private MoveMeteorito[] moveMeteorito;
+    public panel_meteorito (int amount_meteor) {
+        this.amount_meteor = amount_meteor;
+        randomMeteorito = new RandomMeteorito(amount_meteor);
+        moveMeteorito  = new MoveMeteorito[amount_meteor];
         setBackground(Color.BLACK);
         setLayout(null);
 
@@ -32,7 +34,7 @@ public class panel_meteorito  extends JPanel {
 }
 
 class RandomMeteorito extends JPanel {
-    Image randomImage[] = new Image[5];;
+    Image randomImage[];
     String[] imageMeteorito = {
         "images/1.png",
         "images/2.png",
@@ -45,8 +47,9 @@ class RandomMeteorito extends JPanel {
         "images/9.png",
         "images/10.png"
     };
-    public RandomMeteorito() {
+    public RandomMeteorito(int amount_meteor) {
         Random random = new Random();
+        randomImage  = new Image[amount_meteor];
         for (int i = 0; i < randomImage.length; i++) {
             int index = random.nextInt(imageMeteorito.length);
             randomImage[i] = Toolkit.getDefaultToolkit().createImage(System.getProperty("user.dir")+File.separator+imageMeteorito[index]);
@@ -115,5 +118,8 @@ class MoveMeteorito extends Thread{
                 // TODO: handle exception
             }
         }
+    }
+    public void Detection(){
+
     }
 }
