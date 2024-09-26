@@ -1,7 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.io.File;
 import java.util.Random;
@@ -33,7 +32,6 @@ public class panel_meteorito extends JPanel {
         repaint();
     }
 
-    // เพิ่ม getter สำหรับ moveMeteorito[]
     public MoveMeteorito[] getMoveMeteorito() {
         return moveMeteorito;
     }
@@ -60,8 +58,8 @@ class RandomMeteorito extends JPanel {
 class MoveMeteorito extends Thread {
     private int x = 400;
     private int y = 300;
-    private int vx = 1;
-    private int vy = 1;
+    private double vx; 
+    private double vy;
     private panel_meteorito panel;
     private Image meteorImage;
     private Random random = new Random();
@@ -69,37 +67,49 @@ class MoveMeteorito extends Thread {
     MoveMeteorito(panel_meteorito panel, Image meteorImage) {
         this.panel = panel;
         this.meteorImage = meteorImage;
-        vx = random.nextInt(3) + 1; // ความเร็วในแกน X (สุ่ม)
-        vy = random.nextInt(3) + 1; // ความเร็วในแกน Y (สุ่ม)
+        vx = random.nextInt(3) + 1;  // ความเร็วในแกน X (สุ่ม)
+        vy = random.nextInt(3) + 1;  // ความเร็วในแกน  (สุ่ม)
+        // Randomize direction
+        if (random.nextBoolean()) vx = -vx;
+        if (random.nextBoolean()) vy = -vy;
     }
 
     public void move() {
-        // เคลื่อนที่วัตถุ
         x += vx;
         y += vy;
 
-        // การตรวจสอบขอบเขตของจอ
+         // การตรวจสอบขอบเขตของจอ
         if (x >= panel.getWidth() - 50 || x <= 0) {
             vx = -vx; // เด้งในแกน X
         }
         if (y >= panel.getHeight() - 50 || y <= 0) {
-            vy = -vy; // เด้งในแกน Y
+            vy = -vy; // เด้งในแกน 
         }
     }
 
     public void detectCollision(MoveMeteorito other) {
-        Rectangle rect1 = new Rectangle(x, y, 50, 50);
-        Rectangle rect2 = new Rectangle(other.getX(), other.getY(), 50, 50);
+        int radius = 25; // รัศมีอุกกาบาต
+        int dx = this.getX() - other.getX();
+        int dy = this.getY() - other.getY();
+        
+        double distance = Math.sqrt((double)(dx * dx + dy * dy));
+    
+        if (distance < 2 * radius) {
+            // Calculate new velocities based on collision
+            double angle = Math.atan2(dy, dx);
+            double speed1 = Math.sqrt(vx * vx + vy * vy);
+            double speed2 = Math.sqrt(other.vx * other.vx + other.vy * other.vy);
 
-        if (rect1.intersects(rect2)) {
-            // สลับทิศทางเมื่อชนกัน
-            vx = -vx;
-            vy = -vy;
-            other.vx = -other.vx;
-            other.vy = -other.vy;
+            // Swap velocities based on the angle of collision
+            double tempVx = vx;
+            double tempVy = vy;
+            vx = speed2 * Math.cos(angle);
+            vy = speed2 * Math.sin(angle);
+            other.vx = speed1 * Math.cos(angle + Math.PI);
+            other.vy = speed1 * Math.sin(angle + Math.PI);
         }
     }
-
+    
     public int getX() {
         return x;
     }
@@ -125,4 +135,3 @@ class MoveMeteorito extends Thread {
         }
     }
 }
-
