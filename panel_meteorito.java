@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.io.File;
 import java.util.Random;
@@ -19,7 +20,7 @@ public class panel_meteorito extends JPanel {
         setLayout(null);
 
         for (int i = 0; i < moveMeteorito.length; i++) {
-            moveMeteorito[i] = new MoveMeteorito(this, randomMeteorito.randomImage[i]);
+            moveMeteorito[i] = new MoveMeteorito(this);
             moveMeteorito[i].start();
         }
     }
@@ -32,16 +33,57 @@ public class panel_meteorito extends JPanel {
         repaint();
     }
 
-    public MoveMeteorito[] getMoveMeteorito() {
-        return moveMeteorito;
+    public void checkCollisions() {
+        for (int i = 0; i < moveMeteorito.length; i++) {
+            for (int j = i + 1; j < moveMeteorito.length; j++) {
+                if (moveMeteorito[i].getHitBox().intersects(moveMeteorito[j].getHitBox())) {
+                    resolveCollision(moveMeteorito[i], moveMeteorito[j]);
+                }
+            }
+        }
+    }
+
+    private void resolveCollision(MoveMeteorito meteor1, MoveMeteorito meteor2) {
+        // ปรับตำแหน่งของอุกกาบาตเมื่อชนกัน
+        Rectangle hitBox1 = meteor1.getHitBox();
+        Rectangle hitBox2 = meteor2.getHitBox();
+
+        int overlapX = Math.min(hitBox1.x + hitBox1.width, hitBox2.x + hitBox2.width) - Math.max(hitBox1.x, hitBox2.x);
+        int overlapY = Math.min(hitBox1.y + hitBox1.height, hitBox2.y + hitBox2.height) - Math.max(hitBox1.y, hitBox2.y);
+
+        if (overlapX < overlapY) {
+            if (hitBox1.x < hitBox2.x) {
+                meteor1.setX(meteor1.getX() - overlapX); // เลื่อน meteor1 ไปทางซ้าย
+            } else {
+                meteor1.setX(meteor1.getX() + overlapX); // เลื่อน meteor1 ไปทางขวา
+            }
+        } else {
+            if (hitBox1.y < hitBox2.y) {
+                meteor1.setY(meteor1.getY() - overlapY); // เลื่อน meteor1 ขึ้น
+            } else {
+                meteor1.setY(meteor1.getY() + overlapY); // เลื่อน meteor1 ลง
+            }
+        }
+
+        // เปลี่ยนทิศทาง
+        meteor1.handleCollision();
+        meteor2.handleCollision();
     }
 }
 
 class RandomMeteorito extends JPanel {
-    Image randomImage[];
+    Image[] randomImage;
     String[] imageMeteorito = {
-        "images/1.png", "images/2.png", "images/3.png", "images/4.png", "images/5.png",
-        "images/6.png", "images/7.png", "images/8.png", "images/9.png", "images/10.png"
+        "images/1.png",
+        "images/2.png",
+        "images/3.png",
+        "images/4.png",
+        "images/5.png",
+        "images/6.png",
+        "images/7.png",
+        "images/8.png",
+        "images/9.png",
+        "images/10.png"
     };
 
     public RandomMeteorito(int amount_meteor) {
@@ -58,58 +100,50 @@ class RandomMeteorito extends JPanel {
 class MoveMeteorito extends Thread {
     private int x = 400;
     private int y = 300;
-    private double vx; 
-    private double vy;
     private panel_meteorito panel;
-    private Image meteorImage;
     private Random random = new Random();
-
-    MoveMeteorito(panel_meteorito panel, Image meteorImage) {
+    private int randomdirection;
+    private int speed;
+    MoveMeteorito(panel_meteorito panel) {
         this.panel = panel;
-        this.meteorImage = meteorImage;
-        vx = random.nextInt(3) + 1;  // ความเร็วในแกน X (สุ่ม)
-        vy = random.nextInt(3) + 1;  // ความเร็วในแกน  (สุ่ม)
-        // Randomize direction
-        if (random.nextBoolean()) vx = -vx;
-        if (random.nextBoolean()) vy = -vy;
+        randomdirection = random.nextInt(8);
+        speed = random.nextInt(3) + 1;
     }
 
     public void move() {
-        x += vx;
-        y += vy;
+        switch (randomdirection) {
+            case 0: x += speed; break; // right
+            case 1: y += speed; break; // down
+            case 2: x -= speed; break; // left
+            case 3: y -= speed; break; // up
+            case 4: x += speed; y -= speed; break; // upright
+            case 5: x -= speed; y -= speed; break; // upleft
+            case 6: x += speed; y += speed; break; // downright
+            case 7: x -= speed; y += speed; break; // downleft
+        }
 
-         // การตรวจสอบขอบเขตของจอ
-        if (x >= panel.getWidth() - 50 || x <= 0) {
-            vx = -vx; // เด้งในแกน X
+        // ตรวจสอบการชนขอบหน้าจอ
+        if (x < 0) {
+            x = 0; // ขอบซ้าย
+            randomdirection = 0; // เปลี่ยนทิศทางไปทางขวา
+        } else if (x > (panel.getWidth() - 50)) {
+            x = panel.getWidth() - 50; // ขอบขวา
+            randomdirection = 2; // เปลี่ยนทิศทางไปทางซ้าย
         }
-        if (y >= panel.getHeight() - 50 || y <= 0) {
-            vy = -vy; // เด้งในแกน 
+
+        if (y < 0) {
+            y = 0; // ขอบบน
+            randomdirection = 1; // เปลี่ยนทิศทางไปทางลง
+        } else if (y > (panel.getHeight() - 50)) {
+            y = panel.getHeight() - 50; // ขอบล่าง
+            randomdirection = 3; // เปลี่ยนทิศทางไปทางขึ้น
         }
+
+
+        // ตรวจสอบการชนกัน
+        panel.checkCollisions();
     }
 
-    public void detectCollision(MoveMeteorito other) {
-        int radius = 25; // รัศมีอุกกาบาต
-        int dx = this.getX() - other.getX();
-        int dy = this.getY() - other.getY();
-        
-        double distance = Math.sqrt((double)(dx * dx + dy * dy));
-    
-        if (distance < 2 * radius) {
-            // Calculate new velocities based on collision
-            double angle = Math.atan2(dy, dx);
-            double speed1 = Math.sqrt(vx * vx + vy * vy);
-            double speed2 = Math.sqrt(other.vx * other.vx + other.vy * other.vy);
-
-            // Swap velocities based on the angle of collision
-            double tempVx = vx;
-            double tempVy = vy;
-            vx = speed2 * Math.cos(angle);
-            vy = speed2 * Math.sin(angle);
-            other.vx = speed1 * Math.cos(angle + Math.PI);
-            other.vy = speed1 * Math.sin(angle + Math.PI);
-        }
-    }
-    
     public int getX() {
         return x;
     }
@@ -118,20 +152,32 @@ class MoveMeteorito extends Thread {
         return y;
     }
 
+    public Rectangle getHitBox() {
+        return new Rectangle(x, y, 50, 50); // ขนาด Hit Box เท่ากับขนาดของอุกกาบาต
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     @Override
     public void run() {
         while (true) {
             try {
-                Thread.sleep(10);
+                Thread.sleep(10); // เปลี่ยนความเร็วในการเคลื่อนที่
                 move();
-                for (int i = 0; i < panel.getMoveMeteorito().length; i++) {
-                    if (panel.getMoveMeteorito()[i] != this) {
-                        detectCollision(panel.getMoveMeteorito()[i]);
-                    }
-                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void handleCollision() {
+        // จัดการกับการชนกัน เช่น การหยุดการเคลื่อนที่
+        randomdirection = (randomdirection + 4) % 8; // เปลี่ยนทิศทางการเคลื่อนที่
     }
 }
