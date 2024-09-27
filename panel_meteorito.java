@@ -19,8 +19,10 @@ public class panel_meteorito extends JPanel {
         setBackground(Color.BLACK);
         setLayout(null);
 
+        int startX = 400;
+        int startY = 200;
         for (int i = 0; i < moveMeteorito.length; i++) {
-            moveMeteorito[i] = new MoveMeteorito(this);
+            moveMeteorito[i] = new MoveMeteorito(this,startX,startY);
             moveMeteorito[i].start();
         }
     }
@@ -29,8 +31,8 @@ public class panel_meteorito extends JPanel {
         super.paintComponent(g);
 
         for (int i = 0; i < moveMeteorito.length; i++) {
-            int x = random.nextInt(750); 
-            int y = random.nextInt(550); 
+            //int x = random.nextInt(750); 
+            //int y = random.nextInt(550); 
             g.drawImage(randomMeteorito.randomImage[i], moveMeteorito[i].getX(), moveMeteorito[i].getY(), 50, 50, this);
         }
     }
@@ -101,19 +103,21 @@ class RandomMeteorito extends JPanel {
 }
 
 class MoveMeteorito extends Thread {
-    private int x = 400;
-    private int y = 300;
+    private int x = 0;
+    private int y = 0;
     private panel_meteorito panel;
     private Random random = new Random();
     private int randomdirection;
     private int speed;  
-    private int[] random257 = {2, 5, 7};
-    private int[] random046 = {0, 4, 6};
-    private int[] random345 = {3, 4, 5};
-    private int[] random176 = {1, 7, 6};
+    private int[] random257 = {2, 5, 7};// สุ่มทิศทางใหม่เป็นซ้าย, ซ้ายบน, หรือซ้ายล่าง
+    private int[] random046 = {0, 4, 6};// สุ่มทิศทางใหม่เป็นขวา, ขวาบน, หรือขวาล่าง
+    private int[] random345 = {3, 4, 5};// สุ่มทิศทางใหม่เป็นขึ้น, ขึ้นขวา, หรือขึ้นซ้าย
+    private int[] random176 = {1, 7, 6};// สุ่มทิศทางใหม่เป็นลง, ลงซ้าย, หรือลงขวา
 
-    MoveMeteorito(panel_meteorito panel) {
+    MoveMeteorito(panel_meteorito panel, int startX, int startY) {
         this.panel = panel;
+        this.x = startX; 
+        this.y = startY;
         randomdirection = random.nextInt(8);  
         speed = random.nextInt(5) + 1;  
     }
@@ -146,13 +150,13 @@ class MoveMeteorito extends Thread {
             if (randomdirection == 0 || randomdirection == 4 || randomdirection == 6) {
                 randomdirection = random257[random.nextInt(random257.length)];  
                 speed = random.nextInt(5) + 1;
-                x = panel.getWidth()-50;
+                //x = panel.getWidth()-50;
             }
         } else if (x <= 0) {
             if (randomdirection == 2 || randomdirection == 5 || randomdirection == 7) {
                 randomdirection = random046[random.nextInt(random046.length)]; 
                 speed = random.nextInt(5) + 1;
-                x = 0;
+                //x = 0;
             }
         }
 
@@ -160,13 +164,13 @@ class MoveMeteorito extends Thread {
             if (randomdirection == 1 || randomdirection == 7 || randomdirection == 6) {
                 randomdirection = random345[random.nextInt(random345.length)];  
                 speed = random.nextInt(5) + 1;
-                y = panel.getHeight() - 50;
+                //y = panel.getHeight() - 50;
             }
         } else if (y <= 0) {
             if (randomdirection == 3 || randomdirection == 4 || randomdirection == 5) {
                 randomdirection = random176[random.nextInt(random176.length)];  
                 speed = random.nextInt(5) + 1;
-                y = 0;
+                //y = 0;
             }
         }
 
@@ -210,16 +214,13 @@ class MoveMeteorito extends Thread {
     public void handleCollision() {
         if (randomdirection == 0 || randomdirection == 4 || randomdirection == 6) {
             randomdirection = random257[random.nextInt(random257.length)];  
-            speed = random.nextInt(5) + 1;
-        }else  if (randomdirection == 2 || randomdirection == 5 || randomdirection == 7) {
-            randomdirection = random046[random.nextInt(random046.length)];  
-            speed = random.nextInt(5) + 1;
-        }else if (randomdirection == 1 || randomdirection == 7 || randomdirection == 6) {
+        } else if (randomdirection == 2 || randomdirection == 5 || randomdirection == 7) {
+            randomdirection = random046[random.nextInt(random046.length)]; 
+        } else if (randomdirection == 1 || randomdirection == 6) {
             randomdirection = random345[random.nextInt(random345.length)];  
-            speed = random.nextInt(5) + 1;
-        }else if (randomdirection == 3 || randomdirection == 4 || randomdirection == 5) {
-            randomdirection = random176[random.nextInt(random176.length)];  
-            speed = random.nextInt(5) + 1;
+        } else if (randomdirection == 3 || randomdirection == 5) {
+            randomdirection = random176[random.nextInt(random176.length)]; 
         }
+        speed = random.nextInt(5) + 1;
     }
 }
