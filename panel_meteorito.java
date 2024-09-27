@@ -106,7 +106,7 @@ class MoveMeteorito extends Thread {
     private panel_meteorito panel;
     private Random random = new Random();
     private int randomdirection;
-    private int speed;  // Speed of the meteor
+    private int speed;  
     private int[] random257 = {2, 5, 7};
     private int[] random046 = {0, 4, 6};
     private int[] random345 = {3, 4, 5};
@@ -114,8 +114,8 @@ class MoveMeteorito extends Thread {
 
     MoveMeteorito(panel_meteorito panel) {
         this.panel = panel;
-        randomdirection = random.nextInt(8);  // Random initial direction
-        speed = random.nextInt(5) + 1;  // Random speed between 1 and 5
+        randomdirection = random.nextInt(8);  
+        speed = random.nextInt(5) + 1;  
     }
 
     public void move() {
@@ -144,13 +144,13 @@ class MoveMeteorito extends Thread {
         // Handle boundary conditions
         if (x >= panel.getWidth() - 50) {
             if (randomdirection == 0 || randomdirection == 4 || randomdirection == 6) {
-                randomdirection = random257[random.nextInt(random257.length)];  // Choose from leftward directions
+                randomdirection = random257[random.nextInt(random257.length)];  
                 speed = random.nextInt(5) + 1;
                 x = panel.getWidth()-50;
             }
         } else if (x <= 0) {
             if (randomdirection == 2 || randomdirection == 5 || randomdirection == 7) {
-                randomdirection = random046[random.nextInt(random046.length)];  // Choose from rightward directions
+                randomdirection = random046[random.nextInt(random046.length)]; 
                 speed = random.nextInt(5) + 1;
                 x = 0;
             }
@@ -158,13 +158,13 @@ class MoveMeteorito extends Thread {
 
         if (y >= panel.getHeight() - 50) {
             if (randomdirection == 1 || randomdirection == 7 || randomdirection == 6) {
-                randomdirection = random345[random.nextInt(random345.length)];  // Choose upward directions
+                randomdirection = random345[random.nextInt(random345.length)];  
                 speed = random.nextInt(5) + 1;
                 y = panel.getHeight() - 50;
             }
         } else if (y <= 0) {
             if (randomdirection == 3 || randomdirection == 4 || randomdirection == 5) {
-                randomdirection = random176[random.nextInt(random176.length)];  // Choose downward directions
+                randomdirection = random176[random.nextInt(random176.length)];  
                 speed = random.nextInt(5) + 1;
                 y = 0;
             }
