@@ -11,7 +11,7 @@ public class panel_meteorito extends JPanel {
     private int amount_meteor;
     private RandomMeteorito randomMeteorito;
     private MoveMeteorito[] moveMeteorito;
-
+    private Random random = new Random();
     public panel_meteorito(int amount_meteor) {
         this.amount_meteor = amount_meteor;
         randomMeteorito = new RandomMeteorito(amount_meteor);
@@ -27,13 +27,17 @@ public class panel_meteorito extends JPanel {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
         for (int i = 0; i < moveMeteorito.length; i++) {
+            int x = random.nextInt(750); 
+            int y = random.nextInt(550); 
             g.drawImage(randomMeteorito.randomImage[i], moveMeteorito[i].getX(), moveMeteorito[i].getY(), 50, 50, this);
         }
         repaint();
     }
 
     public void checkCollisions() {
+        
         for (int i = 0; i < moveMeteorito.length; i++) {
             for (int j = i + 1; j < moveMeteorito.length; j++) {
                 if (moveMeteorito[i].getHitBox().intersects(moveMeteorito[j].getHitBox())) {
@@ -52,7 +56,7 @@ public class panel_meteorito extends JPanel {
         int overlapY = Math.min(hitBox1.y + hitBox1.height, hitBox2.y + hitBox2.height) - Math.max(hitBox1.y, hitBox2.y);
 
         if (overlapX < overlapY) {
-            if (hitBox1.x < hitBox2.x) {
+                 if (hitBox1.x < hitBox2.x) {
                 meteor1.setX(meteor1.getX() - overlapX); // เลื่อน meteor1 ไปทางซ้าย
             } else {
                 meteor1.setX(meteor1.getX() + overlapX); // เลื่อน meteor1 ไปทางขวา
@@ -107,7 +111,7 @@ class MoveMeteorito extends Thread {
     MoveMeteorito(panel_meteorito panel) {
         this.panel = panel;
         randomdirection = random.nextInt(8);
-        speed = random.nextInt(3) + 1;
+        speed = random.nextInt(8) + 1;
     }
 
     public void move() {
