@@ -3,7 +3,8 @@ import javax.swing.JFrame;
 
 public class Main {
     public static void main(String[] args) {
-        int amount_meteor = 2;
+        try {
+            int amount_meteor = 2;
         //รับจำนวนอุกกาบาต
         if (args.length>0) {
             amount_meteor = Integer.parseInt(args[0]);
@@ -18,6 +19,10 @@ public class Main {
         frame.add(mypanel);
 
         frame.setVisible(true);
+        } catch (Exception e) {
+            System.out.println(e+"it is not collect");
+        }
+        
     }
     
 }

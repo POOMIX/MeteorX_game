@@ -29,17 +29,16 @@ public class panel_meteorito extends JPanel {
         super.paintComponent(g);
 
         for (int i = 0; i < moveMeteorito.length; i++) {
-            int x = random.nextInt(750); 
-            int y = random.nextInt(550); 
             g.drawImage(randomMeteorito.randomImage[i], moveMeteorito[i].getX(), moveMeteorito[i].getY(), 50, 50, this);
         }
         repaint();
     }
 
     public void checkCollisions() {
-        
         for (int i = 0; i < moveMeteorito.length; i++) {
+            if (moveMeteorito[i] == null) continue; // Skip if null
             for (int j = i + 1; j < moveMeteorito.length; j++) {
+                if (moveMeteorito[j] == null) continue; // Skip if null
                 if (moveMeteorito[i].getHitBox().intersects(moveMeteorito[j].getHitBox())) {
                     resolveCollision(moveMeteorito[i], moveMeteorito[j]);
                 }
@@ -48,33 +47,42 @@ public class panel_meteorito extends JPanel {
     }
 
     private void resolveCollision(MoveMeteorito meteor1, MoveMeteorito meteor2) {
-        // ปรับตำแหน่งของอุกกาบาตเมื่อชนกัน
         Rectangle hitBox1 = meteor1.getHitBox();
         Rectangle hitBox2 = meteor2.getHitBox();
-
+    
+        // Calculate the overlap
         int overlapX = Math.min(hitBox1.x + hitBox1.width, hitBox2.x + hitBox2.width) - Math.max(hitBox1.x, hitBox2.x);
         int overlapY = Math.min(hitBox1.y + hitBox1.height, hitBox2.y + hitBox2.height) - Math.max(hitBox1.y, hitBox2.y);
-
+    
+        // Adjust positions to resolve the overlap
         if (overlapX < overlapY) {
-                 if (hitBox1.x < hitBox2.x) {
-                meteor1.setX(meteor1.getX() - overlapX); // เลื่อน meteor1 ไปทางซ้าย
+            if (hitBox1.x < hitBox2.x) {
+                meteor1.setX(meteor1.getX() - overlapX); // Move meteor1 to the left
+                meteor2.setX(meteor2.getX() + overlapX); // Move meteor2 to the right
+                meteor1.handleCollision(); // Reverse direction
+                meteor2.handleCollision(); // Reverse direction
             } else {
-                meteor1.setX(meteor1.getX() + overlapX); // เลื่อน meteor1 ไปทางขวา
+                meteor1.setX(meteor1.getX() + overlapX); // Move meteor1 to the right
+                meteor2.setX(meteor2.getX() - overlapX); // Move meteor2 to the left
+                meteor1.handleCollision(); // Reverse direction
+                meteor2.handleCollision(); // Reverse direction
             }
         } else {
             if (hitBox1.y < hitBox2.y) {
-                meteor1.setY(meteor1.getY() - overlapY); // เลื่อน meteor1 ขึ้น
+                meteor1.setY(meteor1.getY() - overlapY); // Move meteor1 up
+                meteor2.setY(meteor2.getY() + overlapY); // Move meteor2 down
+                meteor1.handleCollision(); // Reverse direction
+                meteor2.handleCollision(); // Reverse direction
             } else {
-                meteor1.setY(meteor1.getY() + overlapY); // เลื่อน meteor1 ลง
+                meteor1.setY(meteor1.getY() + overlapY); // Move meteor1 down
+                meteor2.setY(meteor2.getY() - overlapY); // Move meteor2 up
+                meteor1.handleCollision(); // Reverse direction
+                meteor2.handleCollision(); // Reverse direction
             }
         }
-
-        // เปลี่ยนทิศทาง
-        meteor1.handleCollision();
-        meteor2.handleCollision();
     }
-}
-
+    
+    
 class RandomMeteorito extends JPanel {
     Image[] randomImage;
     String[] imageMeteorito = {
@@ -102,45 +110,70 @@ class RandomMeteorito extends JPanel {
 }
 
 class MoveMeteorito extends Thread {
-    private int x = 400;
-    private int y = 300;
+    private int x ;
+    private int y;
     private panel_meteorito panel;
     private Random random = new Random();
     private int randomdirection;
     private int speed;
     MoveMeteorito(panel_meteorito panel) {
         this.panel = panel;
+        // ตั้งค่า x และ y ให้อยู่ที่กลางจอ
+        this.x = panel.getWidth() / 2 - 25; // 50 เป็นขนาดของอุกกาบาต
+        this.y = panel.getHeight() / 2 - 25; // 50 เป็นขนาดของอุกกาบาต
         randomdirection = random.nextInt(8);
-        speed = random.nextInt(8) + 1;
+        speed = random.nextInt(10) + 1;
     }
 
     public void move() {
-        switch (randomdirection) {
-            case 0: x += speed; break; // right
-            case 1: y += speed; break; // down
-            case 2: x -= speed; break; // left
-            case 3: y -= speed; break; // up
-            case 4: x += speed; y -= speed; break; // upright
-            case 5: x -= speed; y -= speed; break; // upleft
-            case 6: x += speed; y += speed; break; // downright
-            case 7: x -= speed; y += speed; break; // downleft
-        }
+            if (randomdirection == 0) { // right
+                x = x + 1;
+            } 
+            else if (randomdirection == 1) { // down
+                y =  y + 1;
+            } 
+            else if (randomdirection == 2) { // left
+                x =  x - 1;
+            } 
+            else if (randomdirection == 3) { // up
+                y =  y - 1;
+            } 
+            else if (randomdirection == 4) { // upright
+                x =  x+ 1;
+                y =  y - 1;
+            } 
+            else if (randomdirection == 5) { // upleft
+                x = x - 1;
+                y =  y - 1;
+            } 
+            else if (randomdirection == 6) { // downright
+                x = x + 1;
+                y = y+ 1;
+            } 
+            else if (randomdirection == 7) { // downleft
+                x = x - 1;
+                y = y + 1;
+            }
 
         // ตรวจสอบการชนขอบหน้าจอ
         if (x < 0) {
             x = 0; // ขอบซ้าย
-            randomdirection = 0; // เปลี่ยนทิศทางไปทางขวา
+            randomdirection = random.nextInt(8); // เปลี่ยนทิศทางไปทางขวา
+            speed = random.nextInt(10) + 1;
         } else if (x > (panel.getWidth() - 50)) {
             x = panel.getWidth() - 50; // ขอบขวา
-            randomdirection = 2; // เปลี่ยนทิศทางไปทางซ้าย
+            randomdirection = random.nextInt(8); // เปลี่ยนทิศทางไปทางซ้าย
+            speed = random.nextInt(10) + 1;
         }
 
         if (y < 0) {
             y = 0; // ขอบบน
-            randomdirection = 1; // เปลี่ยนทิศทางไปทางลง
+            randomdirection = random.nextInt(8); // เปลี่ยนทิศทางไปทางลง
+            speed = random.nextInt(10) + 1;
         } else if (y > (panel.getHeight() - 50)) {
             y = panel.getHeight() - 50; // ขอบล่าง
-            randomdirection = 3; // เปลี่ยนทิศทางไปทางขึ้น
+            randomdirection = random.nextInt(8); // เปลี่ยนทิศทางไปทางขึ้น
+             speed = random.nextInt(10) + 1;
         }
 
 
@@ -172,8 +205,10 @@ class MoveMeteorito extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(10); // เปลี่ยนความเร็วในการเคลื่อนที่
+                Thread.sleep(speed); // เปลี่ยนความเร็วในการเคลื่อนที่
                 move();
+                System.out.println(speed);
+                panel.repaint();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -182,6 +217,8 @@ class MoveMeteorito extends Thread {
 
     public void handleCollision() {
         // จัดการกับการชนกัน เช่น การหยุดการเคลื่อนที่
-        randomdirection = (randomdirection + 4) % 8; // เปลี่ยนทิศทางการเคลื่อนที่
+        randomdirection = random.nextInt(8); // เปลี่ยนทิศทางการเคลื่อนที่
+        speed = random.nextInt(10) + 1;
+        }
     }
 }
