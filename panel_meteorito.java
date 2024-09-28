@@ -119,43 +119,43 @@ class MoveMeteorito extends Thread {
         this.x = startX; 
         this.y = startY;
         randomdirection = random.nextInt(8);  
-        speed = random.nextInt(5) + 1;  
+        speed = random.nextInt(10) + 1;  
     }
 
     public void move() {
         if (randomdirection == 0) {  // right
-            x = x + speed;
+            x = x + 1;
         } else if (randomdirection == 1) {  // down
-            y = y + speed;
+            y = y + 1;
         } else if (randomdirection == 2) {  // left
-            x = x - speed;
+            x = x - 1;
         } else if (randomdirection == 3) {  // up
-            y = y - speed;
+            y = y - 1;
         } else if (randomdirection == 4) {  // upright
-            x = x + speed;
-            y = y - speed;
+            x = x + 1;
+            y = y - 1;
         } else if (randomdirection == 5) {  // upleft
-            x = x - speed;
-            y = y - speed;
+            x = x - 1;
+            y = y - 1;
         } else if (randomdirection == 6) {  // downright
-            x = x + speed;
-            y = y + speed;
+            x = x + 1;
+            y = y + 1;
         } else if (randomdirection == 7) {  // downleft
-            x = x - speed;
-            y = y + speed;
+            x = x - 1;
+            y = y + 1;
         }
 
         // Handle boundary conditions
         if (x >= panel.getWidth() - 50) {
             if (randomdirection == 0 || randomdirection == 4 || randomdirection == 6) {
                 randomdirection = random257[random.nextInt(random257.length)];  
-                speed = random.nextInt(5) + 1;
+                speed = random.nextInt(10) + 1;  
                 //x = panel.getWidth()-50;
             }
         } else if (x <= 0) {
             if (randomdirection == 2 || randomdirection == 5 || randomdirection == 7) {
                 randomdirection = random046[random.nextInt(random046.length)]; 
-                speed = random.nextInt(5) + 1;
+                speed = random.nextInt(10) + 1;  
                 //x = 0;
             }
         }
@@ -163,13 +163,13 @@ class MoveMeteorito extends Thread {
         if (y >= panel.getHeight() - 50) {
             if (randomdirection == 1 || randomdirection == 7 || randomdirection == 6) {
                 randomdirection = random345[random.nextInt(random345.length)];  
-                speed = random.nextInt(5) + 1;
+                speed = random.nextInt(10) + 1;  
                 //y = panel.getHeight() - 50;
             }
         } else if (y <= 0) {
             if (randomdirection == 3 || randomdirection == 4 || randomdirection == 5) {
                 randomdirection = random176[random.nextInt(random176.length)];  
-                speed = random.nextInt(5) + 1;
+                speed = random.nextInt(10) + 1;  
                 //y = 0;
             }
         }
@@ -202,7 +202,7 @@ class MoveMeteorito extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(10); // เปลี่ยนความเร็วในการเคลื่อนที่
+                Thread.sleep(speed); // เปลี่ยนความเร็วในการเคลื่อนที่
                 move();
                 panel.repaint();
             } catch (Exception e) {
@@ -216,11 +216,12 @@ class MoveMeteorito extends Thread {
             randomdirection = random257[random.nextInt(random257.length)];  
         } else if (randomdirection == 2 || randomdirection == 5 || randomdirection == 7) {
             randomdirection = random046[random.nextInt(random046.length)]; 
-        } else if (randomdirection == 1 || randomdirection == 6) {
-            randomdirection = random345[random.nextInt(random345.length)];  
-        } else if (randomdirection == 3 || randomdirection == 5) {
-            randomdirection = random176[random.nextInt(random176.length)]; 
         }
-        speed = random.nextInt(5) + 1;
+        if (randomdirection == 1) {
+            randomdirection = 3;  
+        } else if (randomdirection == 3) {
+            randomdirection = 1; 
+        }
+        speed = random.nextInt(10) + 1;  
     }
 }
