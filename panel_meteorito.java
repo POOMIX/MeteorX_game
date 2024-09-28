@@ -20,6 +20,9 @@ public class panel_meteorito extends JPanel {
     private Timer timer;//ตั้งให้รูปหาย
     private int showX; // ตำแหน่งที่คลิก
     private int showY;
+    private int startX = 350; // ตำแหน่งที่คลิก
+    private int startY = 300;
+    int count = 0;
     public panel_meteorito(int amount_meteor) {
         this.amount_meteor = amount_meteor;
         randomMeteorito = new RandomMeteorito(amount_meteor);
@@ -30,43 +33,38 @@ public class panel_meteorito extends JPanel {
         
 
         for (int i = 0; i < moveMeteorito.length; i++) {
-            moveMeteorito[i] = new MoveMeteorito(this);
+            moveMeteorito[i] = new MoveMeteorito(this,startX,startY);
             moveMeteorito[i].start();
-
-            this.addMouseListener(new MouseAdapter() {
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    for (int j = 0; j < moveMeteorito.length; j++) {
-                        if (moveMeteorito[j] != null) {
-                            // เอาคลิกมาเช็คขนาดของรูปโดยใช้ตำแหน่ง x, y และขนาด 50x50
-                            int x = moveMeteorito[j].getX();
-                            int y = moveMeteorito[j].getY();
-                            if (e.getX() >= x && e.getX() <= x + 50 && e.getY() >= y && e.getY() <= y + 50) {
-                                moveMeteorito[j] = null; // ลบอุกกาบาตตามตำแหน่งคลิก
-                                showX = e.getX();
-                                showY = e.getY();
-                            
-
-                                imageshow = Toolkit.getDefaultToolkit().createImage("images\\bomb.gif");
-                                moveMeteorito[j] = null ;
-                                timer = new Timer(1000, e1 -> {
-                                    imageshow = null;
-                                    repaint();
-                                });
-                                timer.setRepeats(false);
-                                timer.start();
-        
-                                break;
-                            }
+            
+        }
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                count++;
+                System.out.println("Click count: " + count);
+    
+                for (int j = 0; j < moveMeteorito.length; j++) {
+                    if (moveMeteorito[j] != null && count % 2 == 0) {
+                        // เช็คตำแหน่งของคลิกว่าตรงกับอุกกาบาตหรือไม่
+                        int x = moveMeteorito[j].getX();
+                        int y = moveMeteorito[j].getY();
+                        if (e.getX() >= x && e.getX() <= x + 50 && e.getY() >= y && e.getY() <= y + 50) {
+                            moveMeteorito[j] = null;
+                            showX = e.getX();
+                            showY = e.getY();
+                            imageshow = Toolkit.getDefaultToolkit().createImage("images\\bomb.gif");
+                            timer = new Timer(1000, e1 -> {
+                                imageshow = null;
+                                repaint();
+                            });
+                            timer.start();
+                            repaint();  // อัปเดตการแสดงผล
+                            break;
                         }
                     }
-                    
                 }
-                
-            });
-        }
-        
+            }
+        });
     }
 
     protected void paintComponent(Graphics g) {
@@ -160,72 +158,76 @@ class RandomMeteorito extends JPanel {
 }
 
 class MoveMeteorito extends Thread {
-    private int x ;
-    private int y;
+    private int x = 0;
+    private int y = 0;
     private panel_meteorito panel;
     private Random random = new Random();
     private int randomdirection;
-    private int speed;
-    MoveMeteorito(panel_meteorito panel) {
+    private int speed;  
+    private int[] random257 = {2, 5, 7};// สุ่มทิศทางใหม่เป็นซ้าย, ซ้ายบน, หรือซ้ายล่าง
+    private int[] random046 = {0, 4, 6};// สุ่มทิศทางใหม่เป็นขวา, ขวาบน, หรือขวาล่าง
+    private int[] random345 = {3, 4, 5};// สุ่มทิศทางใหม่เป็นขึ้น, ขึ้นขวา, หรือขึ้นซ้าย
+    private int[] random176 = {1, 7, 6};// สุ่มทิศทางใหม่เป็นลง, ลงซ้าย, หรือลงขวา
+
+    MoveMeteorito(panel_meteorito panel, int startX, int startY) {
         this.panel = panel;
-        // ตั้งค่า x และ y ให้อยู่ที่กลางจอ
-        this.x = panel.getWidth() / 2 - 25; // 50 เป็นขนาดของอุกกาบาต
-        this.y = panel.getHeight() / 2 - 25; // 50 เป็นขนาดของอุกกาบาต
-        randomdirection = random.nextInt(8);
-        speed = random.nextInt(10) + 1;
+        this.x = startX; 
+        this.y = startY;
+        randomdirection = random.nextInt(8);  
+        speed = random.nextInt(10) + 1;  
     }
 
     public void move() {
-            if (randomdirection == 0) { // right
-                x = x + 1;
-            } 
-            else if (randomdirection == 1) { // down
-                y =  y + 1;
-            } 
-            else if (randomdirection == 2) { // left
-                x =  x - 1;
-            } 
-            else if (randomdirection == 3) { // up
-                y =  y - 1;
-            } 
-            else if (randomdirection == 4) { // upright
-                x =  x+ 1;
-                y =  y - 1;
-            } 
-            else if (randomdirection == 5) { // upleft
-                x = x - 1;
-                y =  y - 1;
-            } 
-            else if (randomdirection == 6) { // downright
-                x = x + 1;
-                y = y+ 1;
-            } 
-            else if (randomdirection == 7) { // downleft
-                x = x - 1;
-                y = y + 1;
+        if (randomdirection == 0) {  // right
+            x = x + 1;
+        } else if (randomdirection == 1) {  // down
+            y = y + 1;
+        } else if (randomdirection == 2) {  // left
+            x = x - 1;
+        } else if (randomdirection == 3) {  // up
+            y = y - 1;
+        } else if (randomdirection == 4) {  // upright
+            x = x + 1;
+            y = y - 1;
+        } else if (randomdirection == 5) {  // upleft
+            x = x - 1;
+            y = y - 1;
+        } else if (randomdirection == 6) {  // downright
+            x = x + 1;
+            y = y + 1;
+        } else if (randomdirection == 7) {  // downleft
+            x = x - 1;
+            y = y + 1;
+        }
+
+        // Handle boundary conditions
+        if (x >= panel.getWidth() - 50) {
+            if (randomdirection == 0 || randomdirection == 4 || randomdirection == 6) {
+                randomdirection = random257[random.nextInt(random257.length)];  
+                speed = random.nextInt(10) + 1;  
+                //x = panel.getWidth()-50;
             }
-
-        // ตรวจสอบการชนขอบหน้าจอ
-        if (x < 0) {
-            x = 0; // ขอบซ้าย
-            randomdirection = random.nextInt(8); // เปลี่ยนทิศทางไปทางขวา
-            speed = random.nextInt(10) + 1;
-        } else if (x > (panel.getWidth() - 50)) {
-            x = panel.getWidth() - 50; // ขอบขวา
-            randomdirection = random.nextInt(8); // เปลี่ยนทิศทางไปทางซ้าย
-            speed = random.nextInt(10) + 1;
+        } else if (x <= 0) {
+            if (randomdirection == 2 || randomdirection == 5 || randomdirection == 7) {
+                randomdirection = random046[random.nextInt(random046.length)]; 
+                speed = random.nextInt(10) + 1;  
+                //x = 0;
+            }
         }
 
-        if (y < 0) {
-            y = 0; // ขอบบน
-            randomdirection = random.nextInt(8); // เปลี่ยนทิศทางไปทางลง
-            speed = random.nextInt(10) + 1;
-        } else if (y > (panel.getHeight() - 50)) {
-            y = panel.getHeight() - 50; // ขอบล่าง
-            randomdirection = random.nextInt(8); // เปลี่ยนทิศทางไปทางขึ้น
-             speed = random.nextInt(10) + 1;
+        if (y >= panel.getHeight() - 50) {
+            if (randomdirection == 1 || randomdirection == 7 || randomdirection == 6) {
+                randomdirection = random345[random.nextInt(random345.length)];  
+                speed = random.nextInt(10) + 1;  
+                //y = panel.getHeight() - 50;
+            }
+        } else if (y <= 0) {
+            if (randomdirection == 3 || randomdirection == 4 || randomdirection == 5) {
+                randomdirection = random176[random.nextInt(random176.length)];  
+                speed = random.nextInt(10) + 1;  
+                //y = 0;
+            }
         }
-
 
         // ตรวจสอบการชนกัน
         panel.checkCollisions();
@@ -257,7 +259,6 @@ class MoveMeteorito extends Thread {
             try {
                 Thread.sleep(speed); // เปลี่ยนความเร็วในการเคลื่อนที่
                 move();
-                System.out.println(speed);
                 panel.repaint();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -266,9 +267,19 @@ class MoveMeteorito extends Thread {
     }
 
     public void handleCollision() {
-        // จัดการกับการชนกัน เช่น การหยุดการเคลื่อนที่
-        randomdirection = random.nextInt(8); // เปลี่ยนทิศทางการเคลื่อนที่
-        speed = random.nextInt(10) + 1;
+        if (randomdirection == 0 || randomdirection == 4 || randomdirection == 6) {
+            randomdirection = random257[random.nextInt(random257.length)];  
+        } else if (randomdirection == 2 || randomdirection == 5 || randomdirection == 7) {
+            randomdirection = random046[random.nextInt(random046.length)]; 
         }
+
+        if (randomdirection == 1) {
+            randomdirection = 3;  
+        } else if (randomdirection == 3) {
+            randomdirection = 1; 
+        }
+        
+        speed = random.nextInt(10) + 1;  
     }
+}
 }
