@@ -10,10 +10,8 @@ public class Main {
                 amount_meteor = Integer.parseInt(args[0]);
                 System.out.println(amount_meteor);
             } catch (Exception e) {
-                // TODO: handle exception
-            }
-            
-            
+                System.out.println(e+"\tit wrong input");
+            }   
         }
         JFrame frame = new JFrame();
         frame.setSize(800,600);

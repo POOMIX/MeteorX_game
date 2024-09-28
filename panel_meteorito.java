@@ -38,9 +38,10 @@ public class panel_meteorito extends JPanel {
     }
 
     public void checkCollisions() {
-        
         for (int i = 0; i < moveMeteorito.length; i++) {
+            if (moveMeteorito[i] == null) continue; // Skip if null
             for (int j = i + 1; j < moveMeteorito.length; j++) {
+                if (moveMeteorito[j] == null) continue; // Skip if null
                 if (moveMeteorito[i].getHitBox().intersects(moveMeteorito[j].getHitBox())) {
                     resolveCollision(moveMeteorito[i], moveMeteorito[j]);
                 }
@@ -217,11 +218,13 @@ class MoveMeteorito extends Thread {
         } else if (randomdirection == 2 || randomdirection == 5 || randomdirection == 7) {
             randomdirection = random046[random.nextInt(random046.length)]; 
         }
+
         if (randomdirection == 1) {
             randomdirection = 3;  
         } else if (randomdirection == 3) {
             randomdirection = 1; 
         }
+        
         speed = random.nextInt(10) + 1;  
     }
 }
