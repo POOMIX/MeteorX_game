@@ -40,31 +40,32 @@ public class panel_meteorito extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                count++;
-                System.out.println("Click count: " + count);
-    
                 for (int j = 0; j < moveMeteorito.length; j++) {
-                    if (moveMeteorito[j] != null && count % 2 == 0) {
-                        // เช็คตำแหน่งของคลิกว่าตรงกับอุกกาบาตหรือไม่
+                    if (moveMeteorito[j] != null) {
                         int x = moveMeteorito[j].getX();
                         int y = moveMeteorito[j].getY();
-                        if (e.getX() >= x && e.getX() <= x + 50 && e.getY() >= y && e.getY() <= y + 50) {
-                            moveMeteorito[j] = null;
-                            showX = e.getX();
-                            showY = e.getY();
-                            imageshow = Toolkit.getDefaultToolkit().createImage("images\\bomb.gif");
-                            timer = new Timer(1000, e1 -> {
-                                imageshow = null;
-                                repaint();
-                            });
-                            timer.start();
-                            repaint();  // อัปเดตการแสดงผล
-                            break;
+                        if (e.getX() >= x && e.getX() <= x + 100 && e.getY() >= y && e.getY() <= y + 100) {
+                            count++; 
+                            if (count % 2 == 0) {
+                                moveMeteorito[j] = null; 
+                                showX = e.getX(); 
+                                showY = e.getY();
+                                imageshow = Toolkit.getDefaultToolkit().createImage("images\\bomb.gif");
+                                timer = new Timer(1000, e1 -> {
+                                    imageshow = null;
+                                    repaint(); 
+                                });
+                                timer.start(); 
+                                repaint(); 
+                            }
+                            System.out.println("Click count: " + count); 
+                            break; 
                         }
                     }
                 }
             }
         });
+        
     }
 
     protected void paintComponent(Graphics g) {
