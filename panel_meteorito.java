@@ -105,27 +105,27 @@ public class panel_meteorito extends JPanel {
         // Adjust positions to resolve the overlap
         if (overlapX < overlapY) {
             if (hitBox1.x < hitBox2.x) {
-                meteor1.setX(meteor1.getX() - overlapX); // Move meteor1 to the left
-                meteor2.setX(meteor2.getX() + overlapX); // Move meteor2 to the right
-                meteor1.handleCollision(); // Reverse direction
-                meteor2.handleCollision(); // Reverse direction
+                meteor1.setX(meteor1.getX() - overlapX); // ขยับ meteor1 ไปซ้าย
+                meteor2.setX(meteor2.getX() + overlapX); // ขยับ meteor2 ไปขวา
+                meteor1.handleCollision(); // เปลี่ยนทาง
+                meteor2.handleCollision(); // เปลี่ยนทาง
             } else {
-                meteor1.setX(meteor1.getX() + overlapX); // Move meteor1 to the right
-                meteor2.setX(meteor2.getX() - overlapX); // Move meteor2 to the left
-                meteor1.handleCollision(); // Reverse direction
-                meteor2.handleCollision(); // Reverse direction
+                meteor1.setX(meteor1.getX() + overlapX); //  ขยับ meteor1 ไปขวา
+                meteor2.setX(meteor2.getX() - overlapX); //  ขยับ meteor2 ไปซ้าย
+                meteor1.handleCollision(); 
+                meteor2.handleCollision(); 
             }
         } else {
             if (hitBox1.y < hitBox2.y) {
-                meteor1.setY(meteor1.getY() - overlapY); // Move meteor1 up
-                meteor2.setY(meteor2.getY() + overlapY); // Move meteor2 down
-                meteor1.handleCollision(); // Reverse direction
-                meteor2.handleCollision(); // Reverse direction
+                meteor1.setY(meteor1.getY() - overlapY); //  ขยับ meteor1 ขึ้น
+                meteor2.setY(meteor2.getY() + overlapY); //  ขยับ meteor2 ลง
+                meteor1.handleCollision(); 
+                meteor2.handleCollision(); 
             } else {
-                meteor1.setY(meteor1.getY() + overlapY); // Move meteor1 down
-                meteor2.setY(meteor2.getY() - overlapY); // Move meteor2 up
-                meteor1.handleCollision(); // Reverse direction
-                meteor2.handleCollision(); // Reverse direction
+                meteor1.setY(meteor1.getY() + overlapY); //  ขยับ meteor1 ลง
+                meteor2.setY(meteor2.getY() - overlapY); //  ขยับ meteor2 ขึ้น
+                meteor1.handleCollision(); 
+                meteor2.handleCollision(); 
             }
         }
     }
@@ -178,24 +178,24 @@ class MoveMeteorito extends Thread {
     }
 
     public void move() {
-        if (randomdirection == 0) {  // right
+        if (randomdirection == 0) {  // ขวา
             x = x + 1;
-        } else if (randomdirection == 1) {  // down
+        } else if (randomdirection == 1) {  // ลงงง
             y = y + 1;
-        } else if (randomdirection == 2) {  // left
+        } else if (randomdirection == 2) {  // ซ้าย
             x = x - 1;
-        } else if (randomdirection == 3) {  // up
+        } else if (randomdirection == 3) {  // ขึ้นบน
             y = y - 1;
-        } else if (randomdirection == 4) {  // upright
+        } else if (randomdirection == 4) {  // ขึ้นชวา
             x = x + 1;
             y = y - 1;
-        } else if (randomdirection == 5) {  // upleft
+        } else if (randomdirection == 5) {  // ขึ้นซ้าย
             x = x - 1;
             y = y - 1;
-        } else if (randomdirection == 6) {  // downright
+        } else if (randomdirection == 6) {  // ลงขวา
             x = x + 1;
             y = y + 1;
-        } else if (randomdirection == 7) {  // downleft
+        } else if (randomdirection == 7) {  //ลงซ้าย
             x = x - 1;
             y = y + 1;
         }
@@ -242,7 +242,7 @@ class MoveMeteorito extends Thread {
     }
 
     public Rectangle getHitBox() {
-        return new Rectangle(x, y, 50, 50); // ขนาด Hit Box เท่ากับขนาดของอุกกาบาต
+        return new Rectangle(x, y, 50, 50);
     }
 
     public void setX(int x) {
@@ -257,7 +257,7 @@ class MoveMeteorito extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(speed); // เปลี่ยนความเร็วในการเคลื่อนที่
+                Thread.sleep(speed);
                 move();
                 panel.repaint();
             } catch (Exception e) {
