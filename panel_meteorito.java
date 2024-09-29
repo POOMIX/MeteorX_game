@@ -82,9 +82,9 @@ public class panel_meteorito extends JPanel {
 
     public void checkCollisions() {
         for (int i = 0; i < moveMeteorito.length; i++) {
-            if (moveMeteorito[i] == null) continue; // Skip if null
+            if (moveMeteorito[i] == null) continue;
             for (int j = i + 1; j < moveMeteorito.length; j++) {
-                if (moveMeteorito[j] == null) continue; // Skip if null
+                if (moveMeteorito[j] == null) continue;
                 if (moveMeteorito[i].getHitBox().intersects(moveMeteorito[j].getHitBox())) {
                     resolveCollision(moveMeteorito[i], moveMeteorito[j]);
                 }
@@ -98,17 +98,15 @@ public class panel_meteorito extends JPanel {
         Rectangle hitBox1 = meteor1.getHitBox();
         Rectangle hitBox2 = meteor2.getHitBox();
     
-        // Calculate the overlap
         int overlapX = Math.min(hitBox1.x + hitBox1.width, hitBox2.x + hitBox2.width) - Math.max(hitBox1.x, hitBox2.x);
         int overlapY = Math.min(hitBox1.y + hitBox1.height, hitBox2.y + hitBox2.height) - Math.max(hitBox1.y, hitBox2.y);
     
-        // Adjust positions to resolve the overlap
         if (overlapX < overlapY) {
             if (hitBox1.x < hitBox2.x) {
                 meteor1.setX(meteor1.getX() - overlapX); // ขยับ meteor1 ไปซ้าย
                 meteor2.setX(meteor2.getX() + overlapX); // ขยับ meteor2 ไปขวา
-                meteor1.handleCollision(); // เปลี่ยนทาง
-                meteor2.handleCollision(); // เปลี่ยนทาง
+                meteor1.handleCollision();
+                meteor2.handleCollision(); 
             } else {
                 meteor1.setX(meteor1.getX() + overlapX); //  ขยับ meteor1 ไปขวา
                 meteor2.setX(meteor2.getX() - overlapX); //  ขยับ meteor2 ไปซ้าย
@@ -204,14 +202,12 @@ class MoveMeteorito extends Thread {
         if (x >= panel.getWidth() - 50) {
             if (randomdirection == 0 || randomdirection == 4 || randomdirection == 6) {
                 randomdirection = random257[random.nextInt(random257.length)];  
-                speed = random.nextInt(10) + 1;  
-                //x = panel.getWidth()-50;
+                speed = random.nextInt(10) + 1; 
             }
         } else if (x <= 0) {
             if (randomdirection == 2 || randomdirection == 5 || randomdirection == 7) {
                 randomdirection = random046[random.nextInt(random046.length)]; 
                 speed = random.nextInt(10) + 1;  
-                //x = 0;
             }
         }
 
@@ -219,13 +215,11 @@ class MoveMeteorito extends Thread {
             if (randomdirection == 1 || randomdirection == 7 || randomdirection == 6) {
                 randomdirection = random345[random.nextInt(random345.length)];  
                 speed = random.nextInt(10) + 1;  
-                //y = panel.getHeight() - 50;
             }
         } else if (y <= 0) {
             if (randomdirection == 3 || randomdirection == 4 || randomdirection == 5) {
                 randomdirection = random176[random.nextInt(random176.length)];  
                 speed = random.nextInt(10) + 1;  
-                //y = 0;
             }
         }
 
